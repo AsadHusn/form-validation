@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Validation</title>
+    <script
+      src="https://kit.fontawesome.com/29f336925a.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      :root {
+        --error-color: #e74c3c;
+        --success-color: #2ecc71;
+        --border-color: #8e44ad;
+      }
+      body {
+        margin: 0;
+        background-color: #9b59b6;
+        font-family: "Open Sans", sans-serif;
+        display: flex;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: center;
+      }
+      .container {
+        background-color: white;
+        border-radius: 4px;
+        width: 400px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+      .header {
+        background-color: #f7f7f7;
+        border-bottom: thin solid #f0f0f0;
+        padding: 1rem 2rem;
+      }
+      .header h2 {
+        margin: 0;
+      }
+      #form {
+        padding: 2rem;
+      }
+      .form-control {
+        margin-bottom: 0.5rem;
+        position: relative;
+      }
+      .form-control label {
+        font-weight: 500;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      .form-control input {
+        border: 2px solid #f0f0f0;
+        border-radius: inherit;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.5rem;
+        font-family: inherit;
+        font-size: inherit;
+      }
+      .form-control.success input {
+        border-color: var(--success-color);
+      }
+      .form-control.error input {
+        border-color: var(--error-color);
+      }
+      .form-control i {
+        position: absolute;
+        right: 8px;
+        top: 44px;
+        visibility: hidden;
+      }
+      .form-control.success i.fa-check-circle {
+        color: var(--success-color);
+        visibility: visible;
+      }
+      .form-control.error i.fa-exclamation-circle {
+        color: var(--error-color);
+        visibility: visible;
+      }
+      .form-control small {
+        color: var(--error-color);
+        margin-left: 4px;
+        visibility: hidden;
+      }
+      .form-control.error small {
+        visibility: visible;
+      }
+      #form button {
+        color: white;
+        background-color: var(--border-color);
+        border: 2px solid var(--border-color);
+        border-radius: 4px;
+        width: 100%;
+        font-family: inherit;
+        font-size: inherit;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h2>Create Account</h2>
+      </header>
+      <form id="form">
+        <section class="form-control">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Username" required />
+          <i class="fas fa-check-circle"></i>
+          <i class="fas fa-exclamation-circle"></i>
+          <small></small>
+        </section>
+        <section class="form-control">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Email" required />
+          <i class="fas fa-check-circle"></i>
+          <i class="fas fa-exclamation-circle"></i>
+          <small></small>
+        </section>
+        <section class="form-control">
+          <label for="username">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+          />
+          <i class="fas fa-check-circle"></i>
+          <i class="fas fa-exclamation-circle"></i>
+          <small></small>
+        </section>
+        <section class="form-control">
+          <label for="password2">Password Check</label>
+          <input
+            type="password"
+            id="password2"
+            placeholder="Password Check"
+            required
+          />
+          <i class="fas fa-check-circle"></i>
+          <i class="fas fa-exclamation-circle"></i>
+          <small>Password not matched</small>
+        </section>
+        <button type="submit">Save</button>
+      </form>
+    </div>
+    <script>
+      const { form } = document.forms;
+      for (let i = 0; i < form.elements.length - 1; i++) {
+        form.elements[i].onblur = validateInput;
+        form.elements[i].success = false;
+      }
+      form.onsubmit = function (e) {
+        e.preventDefault();
+        for (let i = 0; i < form.elements.length - 1; i++) {
+          if (!form.elements[i].success) {
+            alert("Form contains invalid input fields");
+            return;
+          }
+          alert("Form submitted successfully");
+        }
+      };
+      function validateInput(e) {
+        switch (this.id) {
+          case "username":
+            validateUserName(this);
+            break;
+          case "email":
+            validateEmail(this);
+            break;
+          case "password":
+            validatePassword(this);
+            break;
+          case "password2":
+            validatePassword(form.password);
+            break;
+        }
+      }
+      function setSuccess(element) {
+        element.parentElement.classList.add("success");
+        element.parentElement.classList.remove("error");
+        element.success = true;
+      }
+      function setError({ parentElement }, message) {
+        if (message) parentElement.querySelector("small").textContent = message;
+        parentElement.classList.add("error");
+        parentElement.classList.remove("success");
+      }
+      function validateUserName(username) {
+        if (!username.value) setError(username, "Username cannot be empty");
+        else if (username.value.length < 4)
+          setError(username, "Username must be greater than 4 characters");
+        else setSuccess(username);
+      }
+      function validateEmail(email) {
+        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!email.value) setError(email, "Email cannot be empty");
+        else if (!emailRegex.test(email.value)) {
+          setError(email, "Email is invalid");
+        } else {
+          setSuccess(email);
+        }
+      }
+      function validatePassword(password) {
+        if (!password.value) {
+          setError(password, "Password cannot be empty");
+          setError(form.password2);
+        } else if (password.value.length < 4) {
+          setError(password, "Password must be longer than 4 characters");
+        } else if (password.value !== form.password2.value) {
+          setSuccess(password);
+          setError(form.password2);
+        } else {
+          setSuccess(password);
+          setSuccess(form.password2);
+        }
+      }
+    </script>
+  </body>
+</html>
