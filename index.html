@@ -150,6 +150,7 @@
       </form>
     </div>
     <script>
+      "use strict";
       const { form } = document.forms;
       for (let i = 0; i < form.elements.length - 1; i++) {
         form.elements[i].onblur = validateInput;
@@ -197,28 +198,31 @@
         parentElement.classList.remove("success");
       }
       function validateUserName(username) {
-        if (!username.value) setError(username, "Username cannot be empty");
-        else if (username.value.length < 4)
+        const value = username.value.trim();
+        if (!value) setError(username, "Username cannot be empty");
+        else if (value.length < 4)
           setError(username, "Username must be greater than 4 characters");
         else setSuccess(username);
       }
       function validateEmail(email) {
+        const value = email.value.trim();
         const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        if (!email.value) setError(email, "Email cannot be empty");
-        else if (!emailRegex.test(email.value)) {
+        if (!value) setError(email, "Email cannot be empty");
+        else if (!emailRegex.test(value)) {
           setError(email, "Email is invalid");
         } else {
           setSuccess(email);
         }
       }
       function validatePassword(password) {
-        if (!password.value) {
+        const value = password.value.trim();
+        if (!value) {
           setError(password, "Password cannot be empty");
           setError(password2);
-        } else if (password.value.length < 4) {
+        } else if (value.length < 4) {
           setError(password, "Password must be longer than 4 characters");
           setError(password2);
-        } else if (password.value !== form.password2.value) {
+        } else if (value !== form.password2.value.trim()) {
           setSuccess(password);
           setError(form.password2);
         } else {
