@@ -164,6 +164,11 @@
           }
         }
         alert("Form submitted successfully");
+        for (let i = 0; i < form.elements.length - 1; i++) {
+          form.elements[i].value = "";
+          form.elements[i].success = false;
+          form.elements[i].parentElement.classList.remove("success");
+        }
       };
       function validateInput(e) {
         switch (this.id) {
@@ -209,9 +214,10 @@
       function validatePassword(password) {
         if (!password.value) {
           setError(password, "Password cannot be empty");
-          setError(form.password2);
+          setError(password2);
         } else if (password.value.length < 4) {
           setError(password, "Password must be longer than 4 characters");
+          setError(password2);
         } else if (password.value !== form.password2.value) {
           setSuccess(password);
           setError(form.password2);
